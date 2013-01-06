@@ -6,10 +6,8 @@
 
 // Initialize global data structures
 import processing.serial.*;
-Serial port = new Serial(this, Serial.list()[0], 9600);
+Serial port = new Serial(this, Serial.list()[0], 115200);
 
-int packetOverhead = 6; // packet overhead, including header, CRC, etc
-int packetSize = 7;		// packet size, initial value assumes 1 channel
 int channels;				// Number of channels
 int chanHeight;			// Height of each channel
 int paddedChanHeight;	// Height of each channel after padding
@@ -26,10 +24,10 @@ int readInterval = 0;
 // Initialize global constants
 final int windowHeight = 960;		// Height of overall window
 final int windowWidth = 1280;		// Width of overall window
-final int headerHeight = 20;		// Height of header section for text output
+final int headerHeight = 32;		// Height of header section for text output
 final int lGutterWidth = 64;		// Width of left gutter for text output
 final int rGutterWidth = 64;		// Width of right gutter for text output
-final int footerHeight = 12;		// Height of footer section for text output
+final int footerHeight = 24;		// Height of footer section for text output
 final int chanPadding = 2;			// Unused pixels at the top and bottom of each channel
 final float voltFactor = 0.05;	// Volts per unit, for analog channels
 final int maxSamples = 40960;		// 40k samples is roughly 10-60 seconds worth
@@ -37,7 +35,7 @@ final int maxSamples = 40960;		// 40k samples is roughly 10-60 seconds worth
 final int canvasHeight = windowHeight - headerHeight - footerHeight;
 final int canvasWidth = windowWidth - lGutterWidth - rGutterWidth;
 
-final int debugLevel = 6;			// controls output of console debug messages
+final int debugLevel = 1;			// controls output of console debug messages
 
 /* void setup() -- mandatory initialization function
  * 
@@ -69,7 +67,7 @@ void setup()
 
 		// initialize variables dependent on channel count
 		debugDataSize = port.read();
-		channels = debugDataSize - packetOverhead;
+		channels = debugDataSize - 4;
 		printDebug(3, channels + " channels detected.");
 		chanHeight = (canvasHeight / channels);
 		paddedChanHeight = chanHeight - (chanPadding * 2);
@@ -78,7 +76,6 @@ void setup()
 		chanDigital = new boolean[channels];
 
 		// get initial interval timing data
-		readInterval = port.read();
 		lastReadTime = millis();
 
 		// read channel values into initValue and determine A/D status and names
@@ -113,7 +110,6 @@ void setup()
 
 	// Initialize data store for all samples
 	value = new int[channels][maxSamples];
-	packetSize = debugDataSize;
 	printDebug(1, "Initialization complete.");
 }
 
@@ -154,7 +150,6 @@ void readNewData()
 
 		// get size and timing data
 		debugDataSize = port.read();
-		readInterval = port.read();
 		currReadTime = millis();
 
 		// save channel values into tempValue until CRC is validated
@@ -206,7 +201,7 @@ void redrawScreen()
 	line(lGutterWidth, 0, lGutterWidth, height);
 	line(width - rGutterWidth, 0, width - rGutterWidth, height);
 	// then draw channel dividers
-	stroke(48);
+	stroke(64);
 	for (int i = 0; i < channels; i++) {
 		line(lGutterWidth, (i * chanHeight) + headerHeight, rGutterWidth, (i * chanHeight) + headerHeight);
 	}
@@ -216,40 +211,31 @@ void redrawScreen()
 		textAlign(CENTER, CENTER);
 		text(chanName[i], lGutterWidth / 2, (i * chanHeight) + headerHeight + (chanHeight / 2)); 
 		textAlign(LEFT, CENTER);
-		text(value[i][currSample], lGutterWidth + chanPadding, i * chanHeight + headerHeight + chanPadding); 
+		text(value[i][currSample], lGutterWidth + chanPadding, (i * chanHeight) + headerHeight + (chanHeight / 2)); 
 	}
 
-	textAlign(CENTER, CENTER);
-	String timing = new String(readInterval + " ms");
-	text("reported", width - (rGutterWidth / 2), headerHeight + (canvasHeight / 2) - 40);
-	text(timing, width - (rGutterWidth / 2), headerHeight + (canvasHeight / 2) - 25);
-	int calcInterval = currReadTime - lastReadTime;
-	timing = new String(calcInterval + " ms");
-	text("observed", width - (rGutterWidth / 2), headerHeight + (canvasHeight / 2) + 25);
-	text(timing, width - (rGutterWidth / 2), headerHeight + (canvasHeight / 2) + 40);
+	String timing = new String(currReadTime - lastReadTime + " ms");
+	textAlign(CENTER, TOP);
+	text("interval", width - (rGutterWidth / 2), headerHeight + (canvasHeight / 2) - 18);
+	textAlign(CENTER, BOTTOM);
+	text(timing, width - (rGutterWidth / 2), headerHeight + (canvasHeight / 2) + 18);
+	// end of temporary output
 }
 
-/* boolean identifyPacket () -- helper to read until valid packet header is found
+/* boolean identifyPacket() -- helper to read until valid packet header is found
  *
  * << complete description >>
  */
-boolean identifyPacket ()
+boolean identifyPacket()
 {
 	int data;
 
 	// wait for first header byte, then enough bytes for a complete packet
-	port.bufferUntil(255);
-	port.buffer(packetOverhead);
-/*
 	do {
 		data = port.read();
 		printDebug(6, "read byte: " + data);
 	} while (data != 255);
 
-	while (port.available() < packetOverhead) {
-		printDebug(6, "bytes available: " + port.available());
-	}
-*/
 	// check for valid header sequence one byte at a time
 	printDebug(2, "Inspecting packet...");
 	port.buffer(1);
@@ -261,6 +247,23 @@ boolean identifyPacket ()
 		}
 	}
 	return false;
+}
+
+/* int blockRead(Serial) -- helper to read the next byte of serial data
+ *
+ * << complete description >>
+ */
+int blockRead(Serial openPort)
+{
+	int serialData = -1;
+	// wait until port indicates data is present
+	while (openPort.available() == 0);
+	// and then read until it is no longer -1
+	do {
+		serialData = openPort.read();
+	} while (serialData != -1);
+	
+	return serialData;
 }
 
 /* int scaleVertical(int) -- helper to map channel value to allotted area
@@ -336,55 +339,3 @@ void printDebug(int level, String msg)
 	}
 }
 
-/*
-// initialize value to invalid
-int[] currValue = new int[channels];
-// initialize to size of header
-int size = 4;
-
-// process packet
-while (port.available() >= size) {
-// check for valid header sequence
-if (port.read() == 255 && port.read() == 100 && port.read() == 200) {
-size = port.read();
-currValue[0] = port.read(); //FIXME: only grab first value for display
-for (int i = 1; i < size; i++) { //FIXME: i=0 after prev line is removed
-port.read(); // FIXME: empties buffer of remainder of payload
-}
-int CRC = port.read();
-}
-}
-return currValue;
-}
-
-void pushValue(int[] currValue) 
-{
-currSample++;
-if (currSample >= maxSamples) {
-currSample = 0;
-}
-//  values[width-1] = value;
-}
-
-void drawLines() 
-{
-background(0);
-stroke(250);
-
-int displayWidth = (int) (width / zoom);
-
-//  int k = values.length - displayWidth;
-int k = currSample;
-
-int x0 = 0;
-int y0 = getY(value[currSample][k]);
-for (int i=1; i<displayWidth; i++) {
-k++;
-int x1 = (int) (i * (width-1) / (displayWidth-1));
-int y1 = getY(value[currSample][k]);
-line(x0, y0, x1, y1);
-x0 = x1;
-y0 = y1;
-}
-}
- */
