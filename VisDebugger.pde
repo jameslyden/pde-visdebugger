@@ -106,7 +106,7 @@ void draw()
 
 
 //##############################################################################
-// COMMUNICATIONS FUNCTIONS
+// COMMUNICATIONS FUNCTIONS: moved to Communications.pde
 //##############################################################################
 
 /* void readNewData() -- get new samples from serial port (blocking call)
@@ -428,26 +428,8 @@ void keyReleased()
 
 
 //##############################################################################
-// GENERIC HELPER FUNCTIONS
+// GENERIC HELPER FUNCTIONS: moved to Utilities.pde
 //##############################################################################
-
-/* void printDebug(int, String) -- print debug message if minimum level met
- * 
- * printDebug(int level, String msg) prints msg to the console if the global
- * debugLevel is set to at least level.
- */
-void printDebug(int level, String msg)
-{
-	if (debugLevel >= level) {
-		String timestamp=new String(hour() + ":" + minute() + ":" + second());
-		String label=new String(timestamp + "+++D" + level + ": ");
-		for (int i = 0; i < level; i++) {
-			label=new String(label + "   ");
-		}
-		println(label + msg);
-	}
-}
-
 
 //##############################################################################
 // Cogito ergo FIN ~~ I think, therefore I END
