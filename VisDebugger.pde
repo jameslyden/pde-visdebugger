@@ -1,6 +1,14 @@
 /* VisDebugger: Visualization tool for Arduino Debugger
  * James Lyden <james@lyden.org>
  *
+ * VisDebugger serves as a basic (read slow/feature-free) oscilloscope/logic
+ * analyzer for Arduino projects. It connects to an Arduino board and reads data
+ * from the Debugger function (which sends a single set of samples per call, so
+ * call it from within the main loop for best results). VisDebugger is able to
+ * parse the mixed analog/digital values and automatically determine the number
+ * and type of channels. It then plots the incoming data, which can be zoomed in
+ * and out on, until the user closes the program.
+ *
  * Setup: ensure same version and baud rate as the Arduino Debugger instance
  * NOTE: there is no provision for pushing non-debug data back on the serial
  * line, which makes it unlikely this will work alongside a second program using
