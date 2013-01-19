@@ -40,9 +40,11 @@ void setup()
 	int dChannelCount = 0;
 	int aChannelCount = 0;
 
+	// Maintain buffer prior to getting new packet
+	manageBuffer();
+
 	// Use initial data set to configure channels
 	printDebug(1, "Initializing program.");
-	port.clear();
 	do {
 		// wait for at least 6 bytes (minimum packet size) to arrive
 		printDebug(2, "Waiting for packet...");

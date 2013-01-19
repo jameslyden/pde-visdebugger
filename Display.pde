@@ -85,7 +85,7 @@ void redrawScreen()
 	text("x " + zoom, width - (rGutterWidth / 2), height - footerHeight - 16);
 	// TODO: add scale bar to the footer area
 
-	// buffer fill indicator
+/*	// buffer fill indicator
 	if (bufferWaiting < 25) {
 		fill(0,144,0);	
 	}
@@ -111,6 +111,7 @@ void redrawScreen()
 	fill(224);
 	text("buffer", width - (rGutterWidth / 2), headerHeight + 16);
 	text(buffered, width - (rGutterWidth / 2), headerHeight + 36);
+*/
 
 	// data acquisition speed indicator
 	if (readInterval < 15) {

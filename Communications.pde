@@ -21,7 +21,9 @@ void readNewData()
 	int CRCsent = -1;
 	int[] tempValue = new int[channels];
 
-	// Use initial data set to configure channels
+	// Maintain buffer prior to getting new packet
+	manageBuffer();
+
 	printDebug(3, "Getting new serial data.");
 	do {
 		// wait for at least 6 bytes (minimum packet size) to arrive
@@ -65,12 +67,6 @@ void readNewData()
 	readInterval = currReadTime - lastReadTime;
 	lastReadTime = currReadTime;
 
-	// if the buffer is too full, purge it in order to stay timely
-	bufferWaiting = port.available();
-	if (bufferWaiting > 1000) {
-		printDebug(2, "Buffer full. Purging.");
-		port.clear();
-	}
 	printDebug(3, "Finished getting serial data.");
 }
 
@@ -103,17 +99,14 @@ boolean identifyPacket()
 
 /* int blockRead(Serial) -- helper to read the next byte of serial data
  *
- * << complete description >>
+ * << complete description >><< complete description >>
  */
 int blockRead(Serial openPort)
 {
 	printDebug(6, "blockRead called.");
 	int serialData = -1;
 
-	// wait until port indicates data is present
-//	while (openPort.available() == 0);
-
-	// and then read until it is no longer -1
+	// Read until it is no longer -1
 	do {
 		serialData = openPort.read();
 	} while (serialData == -1);
@@ -122,5 +115,18 @@ int blockRead(Serial openPort)
 	return serialData;
 }
 
-
+/* void manageBuffer() -- helper to clear stale buffer and maintain metrics
+ *
+ * If VisDebugger doesn't read bytes off the serial line fast enough, the buffer
+ * can very quickly fall many seconds behind, and will continue falling behind
+ * as long as the Arduino is sending data. To ensure VisDebugger is displaying
+ * real-time values, the buffer is cleared before each new packet is read. The
+ * global bufferWaiting variable captures the number of backlogged packets that
+ * are discarded prior to each read (for use by the display).
+ */
+void manageBuffer()
+{
+	bufferWaiting = port.available();
+	port.clear();
+}
 
