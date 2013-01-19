@@ -22,8 +22,7 @@ final float voltFactor = 0.02;	// Volts per unit, for analog channels
 // Database of values
 int[][] value;				// data storage for all channels, all samples
 int currSample = 0;		// column in value that represents the current time
-final int maxSamples = 40960;		// 40k samples is roughly 10-60 seconds worth
-											// (depending on total analog channel count)
+final int maxSamples = 10000;		// total samples to retain
 
 // Buffering
 int currReadTime = 0;	// time in milliseconds of current data read
