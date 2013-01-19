@@ -120,21 +120,21 @@ void draw()
  * UI control, currently consisting of zoom in/zoom out capabilities. This is
  * likely to expand to pause/play and seeking forward/back in the near future.
  */
-void keyReleased() 
+void keyReleased()
 {
+	int zoomCap = maxSamples / canvasWidth;
+
 	printDebug(1, "Entering keypress handler.");
 	switch (key) {
-		case '+':
-			zoom *= 2.0f;
-			if ((maxSamples / canvasWidth) < zoom)
-				zoom /= 2.0f;
-			printDebug(2, "Zoom in. Zoom level: " + zoom + ".");		
-			break;
-		case '-':
-			zoom /= 2.0f;
-			if ((5 * maxSamples / canvasWidth) < (1 / zoom))
+		case 'a':
+			if (zoom < zoomCap)
 				zoom *= 2.0f;
-			printDebug(2, "Zoom out. Zoom level: " + zoom + ".");		
+			printDebug(2, "Zoom in. Zoom level: " + zoom + ".");
+			break;
+		case 'z':
+			if ((1 / zoom) < zoomCap)
+				zoom /= 2.0f;
+			printDebug(2, "Zoom out. Zoom level: " + zoom + ".");
 			break;
 	}
 	printDebug(1, "Leaving keypress handler.");
