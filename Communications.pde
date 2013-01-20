@@ -16,30 +16,29 @@
 void readNewData()
 {
 	// init local variables
-	int debugDataSize = 0;
 	int CRCcalc = 0;
 	int CRCsent = -1;
 	int[] tempValue = new int[channels];
 
-	// Maintain buffer prior to getting new packet
+	// Condition buffer prior to getting new packet
 	manageBuffer();
 
 	do {
-		// wait for at least 6 bytes (minimum packet size) to arrive
+		// wait for a valid packet to be found
 		while (!identifyPacket());
 
 		// get size and timing data
-		debugDataSize = blockRead(port);
+		blockRead(); // flush debugDataSize, not needed here
 		currReadTime = millis();
 
 		// save channel values into tempValue until CRC is validated
-		for (int i = 0; i < channels; i++) {
-			tempValue[i] = blockRead(port);
-			CRCcalc = CRCcalc + tempValue[i];
+		for (int channel = 0; channel < channels; channel++) {
+			tempValue[channel] = blockRead();
+			CRCcalc = CRCcalc + tempValue[channel];
 		}
 
 		// Build 8-bit CRC from payload
-		CRCsent = blockRead(port);
+		CRCsent = blockRead();
 		CRCcalc = CRCcalc % 256;
 
 	} while (CRCcalc != CRCsent);
@@ -49,8 +48,8 @@ void readNewData()
 		currSample = 0;
 	}
 	// Transfer contents of tempValue to next slot in data store
-	for (int i = 0; i < channels; i++) {
-		value[i][currSample] = tempValue[i];
+	for (int channel = 0; channel < channels; channel++) {
+		value[channel][currSample] = tempValue[channel];
 	}
 
 	// update interval data
@@ -59,7 +58,7 @@ void readNewData()
 
 }
 
-/* boolean identifyPacket() -- helper to read until valid packet header is found
+/* boolean identifyPacket() -- helper to locate packet headers in data stream
  *
  * << complete description >>
  */
@@ -67,33 +66,31 @@ boolean identifyPacket()
 {
 	int data;
 
-	// wait for first header byte, then enough bytes for a complete packet
+	// wait for first header byte
 	do {
-		data = blockRead(port);
+		data = blockRead();
 	} while (data != 255);
 
 	// check for valid header sequence one byte at a time
-	port.buffer(1);
-	if (blockRead(port) == 254) {
-		port.buffer(1);
-		if (blockRead(port) == 253) {
+	if (blockRead() == 254) {
+		if (blockRead() == 253) {
 			return true;
 		}
 	}
 	return false;
 }
 
-/* int blockRead(Serial) -- helper to read the next byte of serial data
+/* int blockRead() -- helper to read the next byte of serial data
  *
- * << complete description >><< complete description >>
+ * << complete description >>
  */
-int blockRead(Serial openPort)
+int blockRead()
 {
 	int serialData = -1;
 
-	// Read until it is no longer -1
+	// Read continuously until it is no longer -1
 	do {
-		serialData = openPort.read();
+		serialData = port.read();
 	} while (serialData == -1);
 	
 	return serialData;

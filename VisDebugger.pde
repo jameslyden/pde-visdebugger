@@ -49,7 +49,7 @@ void setup()
 		while (!identifyPacket());
 
 		// initialize variables dependent on channel count
-		debugDataSize = blockRead(port);
+		debugDataSize = blockRead();
 		channels = debugDataSize - 4 - 1;
 		chanHeight = (canvasHeight / channels);
 		paddedChanHeight = chanHeight - (chanPadding * 2);
@@ -62,7 +62,7 @@ void setup()
 
 		// read channel values into initValue and determine A/D status and names
 		for (int i = 0; i < channels; i++) {
-			initValue[i] = blockRead(port);
+			initValue[i] = blockRead();
 			// treat as digital if value is 250 or 251
 			if ((initValue[i] == 250) || (initValue[i] == 251)) {
 				chanName[i] = new String("DIG-" + dChannelCount++);
@@ -75,7 +75,7 @@ void setup()
 		}
 
 		// Build 8-bit CRC from payload
-		CRCsent = blockRead(port);
+		CRCsent = blockRead();
 		for (int i = 0; i < channels; i++) {
 			CRCcalc = CRCcalc + initValue[i];
 		}
