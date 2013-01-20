@@ -15,7 +15,7 @@ void printDebug(int level, String msg)
 	if (debugLevel >= level) {
 		String timestamp=new String(hour() + ":" + minute() + ":" + second());
 		String label=new String(timestamp + "+++D" + level + ": ");
-		for (int i = 0; i < level; i++) {
+		for (int indent = 0; indent < level; indent++) {
 			label=new String(label + "   ");
 		}
 		println(label + msg);

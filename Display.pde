@@ -32,6 +32,7 @@ void drawBackground()
 	// create basic channel grid
 	for (int channel = 0; channel < channels; channel++) {
 		// print channel name
+		fill(255);
 		textAlign(CENTER, CENTER);
 		text(chanName[channel], lGutterWidth / 2, (channel * chanHeight) + headerHeight + (chanHeight / 2));
 		// alternate row colors
@@ -72,6 +73,7 @@ void printValues()
 {
 	// plot the data
 	stroke(255);
+	fill(255);
 	for (int channel = 0; channel < channels; channel++) {
 		labelChannel(channel);
 		plotPoints(channel);
@@ -116,7 +118,7 @@ void plotPoints(int channel)
 		int sampleNum = (int)(dataCol / zoom);
 		// Only draw a point if data exists
 		if (sampleNum < maxSamples) {
-			int sample = (maxSamples + currSample - sampleNum) % maxSamples;
+			int sample = (maxSamples + currSample - sampleNum - 1) % maxSamples;
 			int sampleValue = value[channel][sample];
 			int x = firstDataCol - dataCol;
 			int y = channelBase - scaleVertical(sampleValue);
