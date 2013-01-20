@@ -18,7 +18,6 @@ void readNewData()
 	// init local variables
 	int CRCcalc = 0;
 	int CRCsent = -1;
-	int[] tempValue = new int[channels];
 
 	// Condition buffer prior to getting new packet
 	manageBuffer();
@@ -31,10 +30,10 @@ void readNewData()
 		blockRead(); // flush debugDataSize, not needed here
 		currReadTime = millis();
 
-		// save channel values into tempValue until CRC is validated
+		// save channel values into data store
 		for (int channel = 0; channel < channels; channel++) {
-			tempValue[channel] = blockRead();
-			CRCcalc = CRCcalc + tempValue[channel];
+			value[channel][currSample] = blockRead();
+			CRCcalc = CRCcalc + value[channel][currSample];
 		}
 
 		// Build 8-bit CRC from payload
@@ -46,10 +45,6 @@ void readNewData()
 	// Manage currSample pointer to maintain ring buffer
 	if (++currSample >= maxSamples) {
 		currSample = 0;
-	}
-	// Transfer contents of tempValue to next slot in data store
-	for (int channel = 0; channel < channels; channel++) {
-		value[channel][currSample] = tempValue[channel];
 	}
 
 	// update interval data
