@@ -44,16 +44,13 @@ void setup()
 	manageBuffer();
 
 	// Use initial data set to configure channels
-	printDebug(1, "Initializing program.");
 	do {
 		// wait for at least 6 bytes (minimum packet size) to arrive
-		printDebug(2, "Waiting for packet...");
 		while (!identifyPacket());
 
 		// initialize variables dependent on channel count
 		debugDataSize = blockRead(port);
 		channels = debugDataSize - 4 - 1;
-		printDebug(2, channels + " channels detected.");
 		chanHeight = (canvasHeight / channels);
 		paddedChanHeight = chanHeight - (chanPadding * 2);
 		initValue = new int[channels];
@@ -75,26 +72,19 @@ void setup()
 				chanName[i] = new String("ANA-" + aChannelCount++);
 				chanDigital[i] = false;
 			}
-			printDebug(3, "Added " + chanName[i] + " (value " + initValue[i] + ").");
 		}
 
 		// Build 8-bit CRC from payload
-		printDebug(2, "Calculating CRC...");
 		CRCsent = blockRead(port);
 		for (int i = 0; i < channels; i++) {
 			CRCcalc = CRCcalc + initValue[i];
 		}
 		CRCcalc = CRCcalc % 256;
 
-		if (CRCcalc != CRCsent)
-			printDebug(3, "CRC mismatch, " + CRCcalc + "/" + CRCsent + ". Starting over.");
 	} while (CRCcalc != CRCsent);
-	printDebug(3, "CRC matches.");
-	printDebug(2, "Packet read. Initializing data store..."); 
 
 	// Initialize data store for all samples
 	value = new int[channels][maxSamples];
-	printDebug(1, "Initialization complete.");
 }
 
 /* void draw() -- mandatory loop function
@@ -124,22 +114,15 @@ void keyReleased()
 {
 	int zoomCap = maxSamples / canvasWidth;
 
-	printDebug(1, "Entering keypress handler.");
 	switch (key) {
 		case 'a':
 			if (zoom < zoomCap)
 				zoom *= 2.0f;
-			printDebug(2, "Zoom in. Zoom level: " + zoom + ".");
 			break;
 		case 'z':
 			if ((1 / zoom) < zoomCap)
 				zoom /= 2.0f;
-			printDebug(2, "Zoom out. Zoom level: " + zoom + ".");
 			break;
 	}
-	printDebug(1, "Leaving keypress handler.");
 }
 
-//##############################################################################
-// Cogito ergo FIN ~~ I think, therefore I END
-//##############################################################################

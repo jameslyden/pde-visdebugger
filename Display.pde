@@ -58,9 +58,10 @@ void redrawScreen()
 				break;
 		}
 		textAlign(LEFT, CENTER);
-		text(printedValue, lGutterWidth + chanPadding * 2, (channel * chanHeight) + headerHeight + (chanHeight / 2)); 
+		text(printedValue, lGutterWidth + chanPadding * 2, (channel * chanHeight) + headerHeight + (chanHeight / 2));
 		// plot points
 		int channelBase = ((channel + 1) * chanHeight) + headerHeight + 2;
+		lastValue = 0;
 		for (int dataCol = 0; dataCol < canvasWidth - 2; dataCol++) {
 			int sampleNum = (int)(dataCol / zoom);
 			// Only draw a point if data exists
@@ -71,10 +72,10 @@ void redrawScreen()
 				int y = channelBase - scaleVertical(sampleValue);
 				point(x, y);
 				// Connect HIGH/LOW lines
-				int lastSample = (sample + 1) % maxSamples;
-				if ((value[channel][lastSample] + value[channel][sample]) == (250 + 251)) {
+				if ((lastValue + sampleValue) == 501) {
 					line(x, channelBase - scaleVertical(250), x, channelBase - scaleVertical(251));
 				}
+				lastValue = sampleValue;
 			}
 		}
 	}		
@@ -154,22 +155,17 @@ int scaleVertical(int unscaledHeight)
 {
 	int scaledHeight;
 
-	printDebug(6, "scaleVertical called for " + unscaledHeight);
 	if (unscaledHeight == 250) {
 		scaledHeight = chanPadding;
-		printDebug(6, "scaleVertical returning " + scaledHeight + " for LOW.");
 	}
 	else if (unscaledHeight == 251) {
 		scaledHeight = chanHeight - chanPadding;
-		printDebug(6, "scaleVertical returning " + scaledHeight + " for HIGH.");
 	}
 	else {
 		float scaleFactor = paddedChanHeight/250.0f;
 		scaledHeight = (int)(unscaledHeight * scaleFactor) + chanPadding;
-		printDebug(6, "scaleVertical returning " + scaledHeight + " for analog.");
 	}
 
 	return scaledHeight;
 }
-
 

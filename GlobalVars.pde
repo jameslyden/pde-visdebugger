@@ -23,6 +23,7 @@ final float voltFactor = 0.02;	// Volts per unit, for analog channels
 int[][] value;				// data storage for all channels, all samples
 int currSample = 0;		// column in value that represents the current time
 final int maxSamples = 10000;		// total samples to retain
+int lastValue;				// prior value read in; used for transition tracking
 
 // Buffering
 int currReadTime = 0;	// time in milliseconds of current data read
