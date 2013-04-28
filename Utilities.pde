@@ -1,5 +1,7 @@
 /* Utilities.pde: Generic utility functions used by VisDebugger
- * James Lyden <james@lyden.org>
+ * Copyright 2013, James Lyden <james@lyden.org>
+ * This code is licensed under the terms of the GNU General Public License.
+ * See COPYING, or refer to http://www.gnu.org/licenses, for further details.
  *
  * The utilities contained herein are not specific to VisDebugger and should be
  * reusable anywhere.

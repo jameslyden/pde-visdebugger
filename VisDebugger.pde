@@ -1,5 +1,7 @@
 /* VisDebugger: Visualization tool for Arduino Debugger
- * James Lyden <james@lyden.org>
+ * Copyright 2013, James Lyden <james@lyden.org>
+ * This code is licensed under the terms of the GNU General Public License.
+ * See COPYING, or refer to http://www.gnu.org/licenses, for further details.
  *
  * VisDebugger serves as a basic (read slow/feature-free) oscilloscope/logic
  * analyzer for Arduino projects. It connects to an Arduino board and reads data

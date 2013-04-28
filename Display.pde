@@ -1,5 +1,7 @@
 /* Display.pde: GUI functions for VisDebugger
- * James Lyden <james@lyden.org>
+ * Copyright 2013, James Lyden <james@lyden.org>
+ * This code is licensed under the terms of the GNU General Public License.
+ * See COPYING, or refer to http://www.gnu.org/licenses, for further details.
  *
  * All functions related to the display of data onscreen, including backdrop,
  * scaling and color determination of components, and plotting of debug data,
