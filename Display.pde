@@ -49,20 +49,6 @@ void drawBackground()
 	}
 }
 
-/* void clearPlot(int channel) -- clears plotted points/value for given channel
- *
- * << complete the description >>
- */
-void clearPlot(int channel)
-{
-	rectMode(CORNER);
-	strokeWeight(0);
-	// alternate row colors
-	if(channel % 2 == 0) fill(24);
-	else fill(32);
-	rect(lGutterWidth + 2, (channel * chanHeight) + headerHeight + 2, canvasWidth - 3, chanHeight);
-}
-
 /* void resetDisplayDefaults() -- resets shape drawing parameters to defaults
  *
  * << complete the description >>
@@ -140,6 +126,20 @@ void plotPoints(int channel)
 			lastValue = sampleValue;
 		}
 	}
+}
+
+/* void clearPlot(int channel) -- clears plotted points/value for given channel
+ *
+ * << complete the description >>
+ */
+void clearPlot(int channel)
+{
+	rectMode(CORNER);
+	strokeWeight(0);
+	// alternate row colors
+	if(channel % 2 == 0) fill(24);
+	else fill(32);
+	rect(lGutterWidth + 2, (channel * chanHeight) + headerHeight + 2, canvasWidth - 3, chanHeight);
 }
 
 /* void printScale() -- prints zoom factor and scale bar in footer
@@ -235,6 +235,54 @@ void printSpeed()
 	text("speed", width - (rGutterWidth / 2), headerHeight + (canvasHeight / 2) - 32);
 	textAlign(CENTER, BOTTOM);
 	text(timing, width - (rGutterWidth / 2), headerHeight + (canvasHeight / 2) + 32);
+}
+
+/* void clearHeader() -- clears header area
+ *
+ * << complete the description >>
+ */
+void clearHeader()
+{
+	noStroke();
+	fill(32);
+	rectMode(CORNERS);
+	rect(0, 0, width,  headerHeight);
+}
+
+/* void clearFooter() -- clears footer area
+ *
+ * << complete the description >>
+ */
+void clearFooter()
+{
+	noStroke();
+	fill(32);
+	rectMode(CORNERS);
+	rect(0, 0, width,  headerHeight);
+}
+
+/* void clearLeftGutter() -- clears left gutter
+ *
+ * << complete the description >>
+ */
+void clearLeftGutter()
+{
+	noStroke();
+	fill(32);
+	rectMode(CORNERS);
+	rect(0, headerHeight + 2, lGutterWidth - 1, height - footerHeight - 1);
+}
+
+/* void clearRightGutter() -- clears right gutter
+ *
+ * << complete the description >>
+ */
+void clearRightGutter()
+{
+	noStroke();
+	fill(32);
+	rectMode(CORNERS);
+	rect(width - rGutterWidth + 2, headerHeight + 2, width, height - footerHeight - 1);
 }
 
 /* int scaleVertical(int) -- helper to map channel value to allotted area
