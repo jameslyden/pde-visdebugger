@@ -141,9 +141,8 @@ void plotPoints(int channel)
 void printScale()
 {
 	// zoom indicator
-	textAlign(CENTER, BOTTOM);
-	text("zoom", width - (rGutterWidth / 2), height - footerHeight - 36);
-	text("x " + zoom, width - (rGutterWidth / 2), height - footerHeight - 16);
+	textAlign(RIGHT, CENTER);
+	text("x" + zoom + " zoom", width - 10, height - footerHeight / 2);
 	// TODO: add scale bar to the footer area
 }
 
