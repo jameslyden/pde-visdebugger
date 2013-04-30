@@ -10,13 +10,20 @@
 
 /* void redrawScreen() -- update the UI with new sample data
  *
- * << complete the description >>
+ * redrawScreen updates the entire UI from the ground up. This is useful at
+ * startup, and if the UI is in an unknown state. Beyond those two scenarios, it
+ * is preferable for performance reasons to redraw individual sections
+ * independently (see the clear<Section> and print<DataType> functions below).
  */
 void redrawScreen()
 {
 	drawBackground();
+	for (int channel = 0; channel < channels; channel++) {
+		clearPlot(channel);
+		printPlot(channel);
+		printChannelData(channel);
+	}
 	resetDisplayDefaults();
-	printValues();
 	printScale();
 	printBuffer();
 	printSpeed();
@@ -24,7 +31,8 @@ void redrawScreen()
 
 /* void drawBackground() -- redraw all static display elements
  *
- * << complete the description >>
+ * drawBackground creates the grid structure and background coloring that the
+ * other print<DataType> functions overlay on top of. 
  */
 void drawBackground()
 {
@@ -38,15 +46,6 @@ void drawBackground()
 	line(0, height - footerHeight, width, height - footerHeight);
 	line(lGutterWidth, headerHeight, lGutterWidth, height - footerHeight);
 	line(width - rGutterWidth, headerHeight, width - rGutterWidth, height - footerHeight);
-
-	// create basic channel grid
-	for (int channel = 0; channel < channels; channel++) {
-		// print channel name
-		fill(255);
-		textAlign(CENTER, CENTER);
-		text(chanName[channel], lGutterWidth / 2, (channel * chanHeight) + headerHeight + (chanHeight / 2));
-		clearPlot(channel);
-	}
 }
 
 /* void resetDisplayDefaults() -- resets shape drawing parameters to defaults
@@ -61,27 +60,14 @@ void resetDisplayDefaults()
 	fill(255);
 }
 
-/* void printValues() -- prints all data associated with channels
+/* void printChannelData(int channel) -- prints name and current value of channel
  *
  * << complete the description >>
  */
-void printValues()
+void printChannelData(int channel)
 {
-	// plot the data
 	stroke(255);
 	fill(255);
-	for (int channel = 0; channel < channels; channel++) {
-		labelChannel(channel);
-		plotPoints(channel);
-	}
-}
-
-/* void labelChannel(int channel) -- prints name and current value of channel
- *
- * << complete the description >>
- */
-void labelChannel(int channel)
-{
 	// print current value
 	String printedValue;
 	switch (value[channel][currSample]) {
@@ -100,11 +86,11 @@ void labelChannel(int channel)
 	text(printedValue, lGutterWidth + chanPadding * 2, (channel * chanHeight) + headerHeight + (chanHeight / 2));
 }
 
-/* void plotPoints(int channel) -- plots values for channel as 2D graph
+/* void printPlot(int channel) -- plots values for channel as 2D graph
  *
  * << complete the description >>
  */
-void plotPoints(int channel)
+void printPlot(int channel)
 {
 	// plot points
 	int firstDataCol = width - rGutterWidth - 2;
