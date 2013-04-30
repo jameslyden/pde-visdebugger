@@ -173,12 +173,11 @@ void printBuffer()
 		fill(192,0,0);	
 	}
 	rectMode(CORNER);
-	rect(width - 6, 6, (12 - width) * bufferWaiting / 1000, headerHeight * 0.75);
-	String buffered = new String(bufferWaiting / 10 + "% used");
-	textAlign(CENTER, TOP);
+	rect(6, 6, 12 + bufferWaiting, headerHeight * 0.75);
+	String buffered = new String("Buffer: " + bufferWaiting / 10 + "% used ");
+	textAlign(RIGHT, CENTER);
 	fill(224);
-	text("buffer", width - (rGutterWidth / 2), headerHeight + 16);
-	text(buffered, width - (rGutterWidth / 2), headerHeight + 36);
+	text(buffered, width - 15, headerHeight / 2);
 }
 
 /* void printSpeed() -- prints data acquisition speed value and indicator
