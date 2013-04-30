@@ -127,13 +127,11 @@ void keyReleased()
 			if ((1 / zoom) < zoomCap)
 				zoom /= 2.0f;
 			break;
-		case 's':
-			if (burstWidth <= maxBurstWidth)
-				burstWidth *= 2;
-			break;
-		case 'x':
-			if (burstWidth > 1)
-				burstWidth /= 2;
+		case 'b':
+			if (burstWidth == 1)
+				burstWidth = maxBurstWidth;
+			else
+				burstWidth = 1;
 			break;
 	}
 }

@@ -21,7 +21,7 @@ boolean[] chanDigital;	// flag for digital/analog treatment of each channel
 float zoom = 1.0f;		// controls zoom levels
 final float voltFactor = 0.02;	// Volts per unit, for analog channels
 int burstWidth = 1;		// controls how many packets are updated at a time
-final int maxBurstWidth = 50;		// Maximum number of packets to burst at once
+final int maxBurstWidth = 10;		// packets to burst at once (when burst is active)
 
 // Database of values
 int[][] value;				// data storage for all channels, all samples
