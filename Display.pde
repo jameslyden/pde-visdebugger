@@ -140,10 +140,25 @@ void plotPoints(int channel)
  */
 void printScale()
 {
+	int spacing = 160;	// pixel distance between ticks
+	int markLoc;			// x-coord of where to set the current mark
+	
 	// zoom indicator
 	textAlign(RIGHT, CENTER);
-	text("x" + zoom + " zoom", width - 10, height - footerHeight / 2);
-	// TODO: add scale bar to the footer area
+	text("x" + zoom + " zoom", width - 6, height - footerHeight / 2);
+	// draw scale bar in the footer area
+	textAlign(CENTER, BOTTOM);
+	for (int scaleStep = 0; scaleStep < canvasWidth; scaleStep += spacing) {
+		markLoc = width - rGutterWidth - scaleStep;
+		text(int(scaleStep / zoom), markLoc, height);
+		// tick mark
+		stroke(0);
+		line(markLoc, height - footerHeight - 5, markLoc, height - footerHeight + 5);
+	}
+	// final marker
+	text(int(canvasWidth / zoom), lGutterWidth, height);
+	stroke(0);
+	line(lGutterWidth, height - footerHeight - 5, lGutterWidth, height - footerHeight + 5);
 }
 
 /* void printBuffer() -- prints buffer backlog value and colored indicator
