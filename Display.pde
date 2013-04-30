@@ -31,21 +31,6 @@ void drawBackground()
 	// lay down base color
 	background(32);
 
-	// create basic channel grid
-	for (int channel = 0; channel < channels; channel++) {
-		// print channel name
-		fill(255);
-		textAlign(CENTER, CENTER);
-		text(chanName[channel], lGutterWidth / 2, (channel * chanHeight) + headerHeight + (chanHeight / 2));
-		// alternate row colors
-		if(channel % 2 == 0) {
-		rectMode(CORNER);
-		strokeWeight(0);
-		fill(24);
-		rect(lGutterWidth, (channel * chanHeight) + headerHeight + 2, canvasWidth, chanHeight);
-		}
-	}
-
 	// then draw frame
 	stroke(0);
 	strokeWeight(2);
@@ -53,6 +38,29 @@ void drawBackground()
 	line(0, height - footerHeight, width, height - footerHeight);
 	line(lGutterWidth, headerHeight, lGutterWidth, height - footerHeight);
 	line(width - rGutterWidth, headerHeight, width - rGutterWidth, height - footerHeight);
+
+	// create basic channel grid
+	for (int channel = 0; channel < channels; channel++) {
+		// print channel name
+		fill(255);
+		textAlign(CENTER, CENTER);
+		text(chanName[channel], lGutterWidth / 2, (channel * chanHeight) + headerHeight + (chanHeight / 2));
+		clearPlot(channel);
+	}
+}
+
+/* void clearPlot(int channel) -- clears plotted points/value for given channel
+ *
+ * << complete the description >>
+ */
+void clearPlot(int channel)
+{
+	rectMode(CORNER);
+	strokeWeight(0);
+	// alternate row colors
+	if(channel % 2 == 0) fill(24);
+	else fill(32);
+	rect(lGutterWidth + 2, (channel * chanHeight) + headerHeight + 2, canvasWidth - 3, chanHeight);
 }
 
 /* void resetDisplayDefaults() -- resets shape drawing parameters to defaults
