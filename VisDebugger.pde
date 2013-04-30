@@ -99,7 +99,9 @@ void setup()
 void draw()
 {
 		readNewData();
-		redrawScreen();
+		// update plots once ever burstWidth read cycles
+		if((currSample % burstWidth) == 0)
+			redrawScreen();
 }
 
 //##############################################################################
@@ -124,6 +126,14 @@ void keyReleased()
 		case 'z':
 			if ((1 / zoom) < zoomCap)
 				zoom /= 2.0f;
+			break;
+		case 's':
+			if (burstWidth <= maxBurstWidth)
+				burstWidth *= 2;
+			break;
+		case 'x':
+			if (burstWidth > 1)
+				burstWidth /= 2;
 			break;
 	}
 }
